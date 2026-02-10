@@ -15,8 +15,7 @@
 
 <br>
 
-<!-- TODO: Add demo GIF here -->
-<!-- <p align="center"><img src="assets/demo.gif" width="600"></p> -->
+<p align="center"><img src="assets/demo.gif" width="600"></p>
 
 No subscription, no third-party servers. Your API key, one hotkey, and you're dictating.
 
