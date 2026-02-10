@@ -1,6 +1,6 @@
 [project]
 name = "voicekey"
-version = "0.1.0"
+version = "0.1.1"
 description = "Voice dictation for macOS. Hold Option, speak, release. Text appears at your cursor."
 requires-python = ">=3.11"
 license = "MIT"
