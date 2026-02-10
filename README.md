@@ -7,7 +7,7 @@
   <p align="center">
     <a href="https://pypi.org/project/voicekey/"><img src="https://img.shields.io/pypi/v/voicekey?color=blue" alt="PyPI"></a>
     <a href="https://github.com/adamkhakhar/voicekey/actions/workflows/ci.yml"><img src="https://github.com/adamkhakhar/voicekey/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-    <a href="https://github.com/adamkhakhar/voicekey/blob/main/LICENSE"><img src="https://img.shields.io/github/license/adamkhakhar/voicekey" alt="License"></a>
+    <a href="https://github.com/adamkhakhar/voicekey/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
     <img src="https://img.shields.io/pypi/pyversions/voicekey" alt="Python">
     <img src="https://img.shields.io/badge/platform-macOS-lightgrey" alt="macOS">
   </p>
