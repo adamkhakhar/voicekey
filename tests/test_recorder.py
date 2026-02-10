@@ -6,8 +6,8 @@ import io
 
 import numpy as np
 
-from oai_whisper.recorder import Recorder
-from oai_whisper.constants import SAMPLE_RATE, CHANNELS
+from voicekey.recorder import Recorder
+from voicekey.constants import SAMPLE_RATE, CHANNELS
 
 
 class TestEncodeWav:

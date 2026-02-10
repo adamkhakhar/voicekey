@@ -1,4 +1,4 @@
-"""Tests for OpenAI transcription client."""
+"""Tests for OpenAI transcription provider."""
 
 import json
 from unittest.mock import MagicMock
@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 import httpx
 import pytest
 
-from oai_whisper.transcriber import transcribe
-from oai_whisper.constants import DEFAULT_MODEL, OPENAI_API_BASE
+from voicekey.providers.openai import OpenAIProvider
+from voicekey.constants import DEFAULT_MODEL, OPENAI_API_BASE
 
 
 def _make_sse_response(chunks: list[str], done: bool = True) -> list[str]:
@@ -68,7 +68,8 @@ def test_transcribe_returns_full_text(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    result = transcribe(b"fakewav", "sk-test")
+    provider = OpenAIProvider()
+    result = provider.transcribe(b"fakewav", "sk-test")
     assert result == "Hello world!"
 
 
@@ -78,8 +79,9 @@ def test_transcribe_calls_on_chunk(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
+    provider = OpenAIProvider()
     chunks = []
-    transcribe(b"fakewav", "sk-test", on_chunk=chunks.append)
+    provider.transcribe(b"fakewav", "sk-test", on_chunk=chunks.append)
     assert chunks == ["one ", "two ", "three"]
 
 
@@ -89,7 +91,8 @@ def test_transcribe_sends_correct_request(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    transcribe(b"audiobytes", "sk-mykey", model="gpt-4o-transcribe", language="en")
+    provider = OpenAIProvider()
+    provider.transcribe(b"audiobytes", "sk-mykey", model="gpt-4o-transcribe", language="en")
 
     call = fake_client.last_call
     assert call["method"] == "POST"
@@ -106,7 +109,8 @@ def test_transcribe_default_model(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    transcribe(b"wav", "sk-test")
+    provider = OpenAIProvider()
+    provider.transcribe(b"wav", "sk-test")
     assert fake_client.last_call["data"]["model"] == DEFAULT_MODEL
 
 
@@ -116,7 +120,8 @@ def test_transcribe_omits_language_when_empty(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    transcribe(b"wav", "sk-test", language="")
+    provider = OpenAIProvider()
+    provider.transcribe(b"wav", "sk-test", language="")
     assert "language" not in fake_client.last_call["data"]
 
 
@@ -131,7 +136,8 @@ def test_transcribe_handles_empty_events(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    result = transcribe(b"wav", "sk-test")
+    provider = OpenAIProvider()
+    result = provider.transcribe(b"wav", "sk-test")
     assert result == "valid"
 
 
@@ -147,7 +153,8 @@ def test_transcribe_handles_non_data_lines(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    result = transcribe(b"wav", "sk-test")
+    provider = OpenAIProvider()
+    result = provider.transcribe(b"wav", "sk-test")
     assert result == "hello"
 
 
@@ -161,7 +168,8 @@ def test_transcribe_handles_malformed_json(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse(lines))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
-    result = transcribe(b"wav", "sk-test")
+    provider = OpenAIProvider()
+    result = provider.transcribe(b"wav", "sk-test")
     assert result == "ok"
 
 
@@ -170,5 +178,6 @@ def test_transcribe_raises_on_http_error(monkeypatch):
     fake_client = FakeClient(FakeStreamResponse([], status_code=401))
     monkeypatch.setattr(httpx, "Client", lambda **kw: fake_client)
 
+    provider = OpenAIProvider()
     with pytest.raises(httpx.HTTPStatusError):
-        transcribe(b"wav", "sk-bad")
+        provider.transcribe(b"wav", "sk-bad")

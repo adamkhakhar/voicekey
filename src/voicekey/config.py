@@ -1,13 +1,14 @@
-"""TOML config at ~/.config/oai-whisper/config.toml."""
+"""TOML config at ~/.config/voicekey/config.toml."""
 
 import tomllib
 from pathlib import Path
 
 import tomli_w
 
-from .constants import CONFIG_DIR, CONFIG_FILE, DEFAULT_MODEL
+from .constants import CONFIG_DIR, CONFIG_FILE, DEFAULT_MODEL, DEFAULT_PROVIDER
 
 DEFAULTS = {
+    "provider": DEFAULT_PROVIDER,
     "model": DEFAULT_MODEL,
     "hotkey": "option",  # "option", "left_option", "right_option"
     "language": "",      # empty = auto-detect

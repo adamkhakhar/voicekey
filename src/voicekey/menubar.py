@@ -6,12 +6,12 @@ import rumps
 def create_menubar_app(app) -> rumps.App:
     """Create a menu bar app with settings and quit."""
 
-    menubar = rumps.App("oai-whisper", title="🎤", quit_button=None)
+    menubar = rumps.App("voicekey", title="🎤", quit_button=None)
 
     @rumps.clicked("About")
     def about(_):
         rumps.alert(
-            title="oai-whisper",
+            title="voicekey",
             message="Voice dictation for macOS.\nHold Option to dictate.",
         )
 

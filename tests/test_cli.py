@@ -2,7 +2,7 @@
 
 from click.testing import CliRunner
 
-from oai_whisper.cli import main
+from voicekey.cli import main
 
 
 def test_help():
@@ -17,7 +17,7 @@ def test_help():
 
 def test_config_show_all(monkeypatch):
     """'config' with no args shows all config values."""
-    from oai_whisper import config
+    from voicekey import config
     monkeypatch.setattr(config, "load", lambda: {
         "model": "gpt-4o-mini-transcribe",
         "hotkey": "option",
@@ -34,7 +34,7 @@ def test_config_show_all(monkeypatch):
 
 def test_config_show_single(monkeypatch):
     """'config <key>' shows a single value."""
-    from oai_whisper import config
+    from voicekey import config
     monkeypatch.setattr(config, "load", lambda: {"model": "gpt-4o-mini-transcribe"})
 
     runner = CliRunner()
@@ -45,7 +45,7 @@ def test_config_show_single(monkeypatch):
 
 def test_config_show_unknown_key(monkeypatch):
     """'config <unknown>' prints error."""
-    from oai_whisper import config
+    from voicekey import config
     monkeypatch.setattr(config, "load", lambda: {"model": "gpt-4o-mini-transcribe"})
 
     runner = CliRunner()
@@ -55,7 +55,7 @@ def test_config_show_unknown_key(monkeypatch):
 
 def test_config_set_value(monkeypatch, tmp_path):
     """'config <key> <value>' saves the new value."""
-    from oai_whisper import config
+    from voicekey import config
     saved = {}
 
     def mock_save(cfg):
@@ -73,7 +73,7 @@ def test_config_set_value(monkeypatch, tmp_path):
 
 def test_setup_new_key(monkeypatch):
     """'setup' prompts for API key when none exists."""
-    from oai_whisper import auth
+    from voicekey import auth
 
     monkeypatch.setattr(auth, "get_api_key", lambda: None)
     stored_keys = []
@@ -83,9 +83,9 @@ def test_setup_new_key(monkeypatch):
     import types
     mock_perms = types.ModuleType("permissions")
     mock_perms.check_and_guide = lambda: None
-    monkeypatch.setattr("oai_whisper.cli.permissions", mock_perms, raising=False)
-    import oai_whisper.permissions
-    monkeypatch.setattr(oai_whisper.permissions, "check_and_guide", lambda: None)
+    monkeypatch.setattr("voicekey.cli.permissions", mock_perms, raising=False)
+    import voicekey.permissions
+    monkeypatch.setattr(voicekey.permissions, "check_and_guide", lambda: None)
 
     runner = CliRunner()
     result = runner.invoke(main, ["setup"], input="sk-testkey123\n")

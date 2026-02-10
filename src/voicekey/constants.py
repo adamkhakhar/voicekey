@@ -24,15 +24,16 @@ DTYPE = "int16"      # 16-bit PCM
 # OpenAI API
 OPENAI_API_BASE = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-4o-mini-transcribe"
+DEFAULT_PROVIDER = "openai"
 
 # Text insertion timing (seconds)
 PASTE_DELAY = 0.05       # Delay before simulating Cmd+V
 RESTORE_DELAY = 0.10     # Delay before restoring clipboard
 
 # Keychain service name
-KEYCHAIN_SERVICE = "oai-whisper"
-KEYCHAIN_USERNAME = "openai-api-key"
+KEYCHAIN_SERVICE = "voicekey"
+KEYCHAIN_USERNAME = "api-key"
 
 # Config file location
-CONFIG_DIR = "~/.config/oai-whisper"
+CONFIG_DIR = "~/.config/voicekey"
 CONFIG_FILE = "config.toml"

@@ -11,8 +11,8 @@ from . import auth, config
 from .display import AudioMeter, StreamingDisplay, console, print_banner
 from .hotkey import HotkeyListener
 from .inserter import insert_text
+from .providers import get_provider
 from .recorder import Recorder
-from .transcriber import transcribe
 
 
 class State(enum.Enum):
@@ -32,6 +32,7 @@ class App:
         self._lock = threading.Lock()
         self._meter = AudioMeter()
         self._meter_updater: threading.Thread | None = None
+        self._provider = get_provider(self.cfg.get("provider", "openai"))
 
     def on_hotkey_press(self):
         """Called on main thread when Option held past debounce."""
@@ -44,7 +45,6 @@ class App:
         if self.overlay:
             self.overlay.show()
 
-        # Start audio meter display + level polling
         self._meter.start()
         self._meter_updater = threading.Thread(target=self._poll_levels, daemon=True)
         self._meter_updater.start()
@@ -63,7 +63,6 @@ class App:
                 return
             self.state = State.TRANSCRIBING
 
-        # Stop meter + recording
         self._meter.stop()
         wav_data = self.recorder.stop()
         if self.overlay:
@@ -75,7 +74,6 @@ class App:
                 self.state = State.IDLE
             return
 
-        # Spawn transcription thread to avoid blocking the run loop
         t = threading.Thread(target=self._transcribe_and_insert, args=(wav_data,))
         t.daemon = True
         t.start()
@@ -84,7 +82,7 @@ class App:
         stream_display = StreamingDisplay()
         try:
             stream_display.start()
-            text = transcribe(
+            text = self._provider.transcribe(
                 wav_data,
                 self.api_key,
                 model=self.cfg.get("model", "gpt-4o-mini-transcribe"),
@@ -114,24 +112,20 @@ def run():
     """Launch the app with menu bar icon and hotkey listener."""
     api_key = auth.get_api_key()
     if not api_key:
-        click.echo("No API key found. Run `oai-whisper setup` first.")
+        click.echo("No API key found. Run `voicekey setup` first.")
         sys.exit(1)
 
     app = App()
 
-    # Check permissions for banner display
     from . import permissions
     acc_ok = permissions.is_accessibility_trusted()
     mic_ok = permissions.check_microphone()
 
-    # Show startup banner
     print_banner(app.cfg, accessibility=acc_ok, microphone=mic_ok)
 
-    # Import overlay (requires AppKit on main thread)
     from .overlay import Overlay
     app.overlay = Overlay()
 
-    # Set up hotkey listener
     listener = HotkeyListener(
         on_press=app.on_hotkey_press,
         on_release=app.on_hotkey_release,
@@ -148,7 +142,6 @@ def run():
         )
         sys.exit(1)
 
-    # Add tap to current run loop
     source = listener.get_run_loop_source()
     Quartz.CFRunLoopAddSource(
         Quartz.CFRunLoopGetCurrent(),
@@ -156,7 +149,6 @@ def run():
         Quartz.kCFRunLoopCommonModes,
     )
 
-    # Launch menu bar app (takes over the main thread run loop)
     from .menubar import create_menubar_app
     menubar = create_menubar_app(app)
 

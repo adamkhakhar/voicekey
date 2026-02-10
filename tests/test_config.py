@@ -2,8 +2,8 @@
 
 import tomllib
 
-from oai_whisper import config
-from oai_whisper.constants import DEFAULT_MODEL
+from voicekey import config
+from voicekey.constants import DEFAULT_MODEL
 
 
 def test_load_defaults_when_no_file(tmp_path, monkeypatch):
@@ -48,7 +48,7 @@ def test_save_then_load_roundtrip(tmp_path, monkeypatch):
     path = tmp_path / "config.toml"
     monkeypatch.setattr(config, "_config_path", lambda: path)
 
-    original = {"model": "gpt-4o-transcribe", "hotkey": "right_option", "language": "ja"}
+    original = {"provider": "openai", "model": "gpt-4o-transcribe", "hotkey": "right_option", "language": "ja"}
     config.save(original)
     loaded = config.load()
     assert loaded == original

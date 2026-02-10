@@ -1,8 +1,36 @@
 [project]
-name = "oai-whisper"
+name = "voicekey"
 version = "0.1.0"
-description = "macOS CLI voice dictation tool using OpenAI transcription"
+description = "Voice dictation for macOS. Hold Option, speak, release. Text appears at your cursor."
 requires-python = ">=3.11"
+license = "MIT"
+readme = "README.md"
+authors = [
+    { name = "Adam Khakhar", email = "adam.khakhar@gmail.com" },
+]
+keywords = [
+    "voice-dictation",
+    "transcription",
+    "macos",
+    "openai",
+    "speech-to-text",
+    "cli",
+    "dictation",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: MacOS X",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Utilities",
+]
 dependencies = [
     "click>=8.1",
     "keyring>=25.0",
@@ -18,7 +46,12 @@ dependencies = [
 ]
 
 [project.scripts]
-oai-whisper = "oai_whisper.cli:main"
+voicekey = "voicekey.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/adamkhakhar/voicekey"
+Repository = "https://github.com/adamkhakhar/voicekey"
+Issues = "https://github.com/adamkhakhar/voicekey/issues"
 
 [build-system]
 requires = ["hatchling"]

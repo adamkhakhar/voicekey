@@ -4,7 +4,7 @@ import time
 
 from rich.text import Text
 
-from oai_whisper.display import AudioMeter, StreamingDisplay, print_banner
+from voicekey.display import AudioMeter, StreamingDisplay, print_banner
 
 
 class TestPrintBanner:

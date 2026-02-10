@@ -3,11 +3,11 @@
 import threading
 import time
 
-from oai_whisper.constants import (
+from voicekey.constants import (
     KEYCODE_LEFT_OPTION,
     KEYCODE_RIGHT_OPTION,
 )
-from oai_whisper.hotkey import HotkeyListener
+from voicekey.hotkey import HotkeyListener
 
 
 class TestMatchesHotkey:

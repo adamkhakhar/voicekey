@@ -23,21 +23,14 @@ def print_banner(cfg: dict, accessibility: bool, microphone: bool) -> None:
     acc_status = "[green]✓ granted[/]" if accessibility else "[red]✗ not granted[/]"
     mic_status = "[green]✓ available[/]" if microphone else "[red]✗ unavailable[/]"
 
-    body = Text()
-    body.append("  Hotkey        ", style="dim")
-    body.append(hotkey_display + "\n")
-    body.append("  Model         ", style="dim")
-    body.append(cfg.get("model", "gpt-4o-mini-transcribe") + "\n")
     lang = cfg.get("language", "") or "auto-detect"
-    body.append("  Language      ", style="dim")
-    body.append(lang + "\n")
-
-    inner = body.plain  # we'll rebuild with rich markup for the status lines
+    provider = cfg.get("provider", "openai")
 
     content = (
-        f"  [dim]Hotkey[/]        {hotkey_display}\n"
-        f"  [dim]Model[/]         {cfg.get('model', 'gpt-4o-mini-transcribe')}\n"
-        f"  [dim]Language[/]      {lang}\n"
+        f"  [dim]Provider[/]     {provider}\n"
+        f"  [dim]Hotkey[/]       {hotkey_display}\n"
+        f"  [dim]Model[/]        {cfg.get('model', 'gpt-4o-mini-transcribe')}\n"
+        f"  [dim]Language[/]     {lang}\n"
         f"\n"
         f"  [dim]Accessibility[/] {acc_status}\n"
         f"  [dim]Microphone[/]    {mic_status}\n"
@@ -47,7 +40,7 @@ def print_banner(cfg: dict, accessibility: bool, microphone: bool) -> None:
 
     panel = Panel(
         content,
-        title="[bold]oai-whisper[/]",
+        title="[bold]voicekey[/]",
         title_align="left",
         border_style="blue",
         padding=(1, 1),
@@ -97,7 +90,6 @@ class AudioMeter:
         bar = ""
         for i in range(BAR_WIDTH):
             if i < filled:
-                # Gradient: green → yellow → red
                 if i < BAR_WIDTH * 0.6:
                     bar += f"[green]█[/]"
                 elif i < BAR_WIDTH * 0.8:
@@ -152,7 +144,6 @@ class StreamingDisplay:
             self._live.stop()
             self._live = None
         if self._text.strip():
-            # Print final result with nice formatting
             console.print(
                 f"  [green]✓[/] [italic]{self._text.strip()}[/]"
             )
