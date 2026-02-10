@@ -1,14 +1,24 @@
 """OpenAI API client with streaming via httpx."""
 
 import json
+from collections.abc import Callable
 
 import httpx
 
 from .constants import DEFAULT_MODEL, OPENAI_API_BASE
 
 
-def transcribe(wav_bytes: bytes, api_key: str, model: str = DEFAULT_MODEL, language: str = "") -> str:
-    """Send WAV audio to OpenAI transcription API with streaming, return full text."""
+def transcribe(
+    wav_bytes: bytes,
+    api_key: str,
+    model: str = DEFAULT_MODEL,
+    language: str = "",
+    on_chunk: Callable[[str], None] | None = None,
+) -> str:
+    """Send WAV audio to OpenAI transcription API with streaming, return full text.
+
+    If on_chunk is provided, it's called with each text delta as it arrives.
+    """
     url = f"{OPENAI_API_BASE}/audio/transcriptions"
 
     files = {
@@ -50,6 +60,8 @@ def transcribe(wav_bytes: bytes, api_key: str, model: str = DEFAULT_MODEL, langu
                     delta = event.get("text", "")
                     if delta:
                         text_parts.append(delta)
+                        if on_chunk:
+                            on_chunk(delta)
                 except json.JSONDecodeError:
                     continue
 

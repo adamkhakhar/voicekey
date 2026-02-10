@@ -15,6 +15,7 @@ class Recorder:
         self._frames: list[np.ndarray] = []
         self._stream: sd.InputStream | None = None
         self._lock = threading.Lock()
+        self._rms: float = 0.0  # current RMS level (0.0–1.0)
 
     def start(self) -> None:
         with self._lock:
@@ -41,9 +42,18 @@ class Recorder:
         audio = np.concatenate(frames)
         return self._encode_wav(audio)
 
+    @property
+    def rms(self) -> float:
+        """Current RMS audio level, normalized 0.0–1.0."""
+        return self._rms
+
     def _callback(self, indata: np.ndarray, frames: int, time_info, status) -> None:
         with self._lock:
             self._frames.append(indata.copy())
+        # Compute RMS normalized to int16 range (32768)
+        rms_raw = np.sqrt(np.mean(indata.astype(np.float32) ** 2)) / 32768.0
+        # Apply mild log scaling for better visual response
+        self._rms = min(1.0, rms_raw * 5.0)
 
     @staticmethod
     def _encode_wav(audio: np.ndarray) -> bytes:
